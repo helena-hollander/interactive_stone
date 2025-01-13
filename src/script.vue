@@ -85,15 +85,35 @@ const createSphere = (radius, position) => {
     objectsToUpdate.push({mesh, body})
 }
 
+//Floor mesh
+const floorGeometry = new THREE.Mesh(
+    new THREE.PlaneGeometry(10, 20),
+    new THREE.MeshStandardMaterial({
+        color: 0xffffff,
+        metalness: 0.3,
+        roughness: 0.4
+    })
+);
+floorGeometry.rotation.x = -Math.PI * 0.5;
+floorGeometry.receiveShadow = true;
+scene.add(floorGeometry);
 
 //Light
 const ambientLight = new THREE.AmbientLight(0xffffff, 2.1);
 scene.add(ambientLight);
 
+const dirLight = new THREE.DirectionalLight(0xffffff, 2.1);
+dirLight.position.set(5, 2, 5);
+dirLight.castShadow = true;
+dirLight.shadow.camera.far = 15;
+scene.add(dirLight);
+
 //Sizes
 const sizes = {
-    width: 600, 
-    height: 800
+    width: 1080/3, 
+    height: 2340/3
+
+    //2340x1080
 }
 window.addEventListener('resize', () => {
     //Update sizes
@@ -112,7 +132,8 @@ window.addEventListener('resize', () => {
 
 //Camera
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100);
-camera.position.set(-3, 3, 3);
+camera.position.set(0, 5, 0);
+camera.rotation.x = -Math.PI * 0.5;
 scene.add(camera);
 
 //Controls
