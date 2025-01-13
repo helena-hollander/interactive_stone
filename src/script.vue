@@ -18,7 +18,7 @@ debugObject.createSphere = () =>
         z: (Math.random() - 0.5) * 3
         
     });
-    console.log(createSphere);
+
 }
 
 gui.add(debugObject, 'createSphere');
@@ -42,7 +42,7 @@ world.gravity.set(0, -9.82, 0);
 const defaultMaterial = new CANNON.Material('default');
 const defaultContactMaterial = new CANNON.ContactMaterial(defaultMaterial, defaultMaterial, {
     friction: 0.1,
-    restitution: 0.2
+    restitution: 0.6
 });
 world.defaultContactMaterial = defaultContactMaterial;
 
@@ -59,7 +59,7 @@ const objectsToUpdate = [];
 //Create sphere (mesh and body)
 const sphereGeometry = new THREE.SphereGeometry(1, 20, 20);
 const sphereMaterial = new THREE.MeshStandardMaterial({
-    metalness: 0.3, 
+    metalness: 0.8, 
     roughness: 0.4,
     color: 0xdd0000
 });
@@ -69,6 +69,7 @@ const createSphere = (radius, position) => {
     const mesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
     mesh.scale.set(radius, radius, radius);
     mesh.castShadow = true;
+    mesh.receiveShadow = true;
     mesh.position.copy(position);
     scene.add(mesh);
 
@@ -104,7 +105,7 @@ scene.add(floorGeometry);
 const ambientLight = new THREE.AmbientLight(0x4466ff, 2.1);
 scene.add(ambientLight);
 
-const dirLight = new THREE.DirectionalLight(0xfb6989, 1.3);
+const dirLight = new THREE.DirectionalLight(0xfb6989, 1.7);
 dirLight.position.set(0, 8, 15);
 dirLight.castShadow = true;
 dirLight.shadow.camera.far = 35; //Længden af skyggen
