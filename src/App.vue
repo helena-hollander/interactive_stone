@@ -8,6 +8,7 @@ import sceneScript from './script.vue';
 </script>
 
 <template>
+<canvas class="webgl"></canvas>
 <sceneScript></sceneScript>
 
 </template>
