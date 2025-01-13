@@ -40,9 +40,9 @@ world.gravity.set(0, -9.82, 0);
 const defaultMaterial = new CANNON.Material('default');
 const defaultContactMaterial = new CANNON.ContactMaterial(defaultMaterial, defaultMaterial, {
     friction: 0.1,
-    restitution: 0.7
+    restitution: 0.9
 });
-world.addContactMaterial(defaultContactMaterial);
+world.defaultContactMaterial = defaultContactMaterial;
 
 //Floor physics
 const floorShape = new CANNON.Plane();
