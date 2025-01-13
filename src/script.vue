@@ -12,11 +12,13 @@ const debugObject = {};
 
 debugObject.createSphere = () =>
 {
-    createSphere(Math.random() * 0.5, {
-        x: (Math.random() - 0.5) * 3,
-        y: 3,
+    createSphere(Math.random() * 0.2, { //Her styres størrelsen på kuglen
+        x: (Math.random() - 0.5) * 3, //Placeringen af kuglen
+        y: 0.5, //Falder fra denne højde
         z: (Math.random() - 0.5) * 3
+        
     });
+    console.log(createSphere);
 }
 
 gui.add(debugObject, 'createSphere');
@@ -40,7 +42,7 @@ world.gravity.set(0, -9.82, 0);
 const defaultMaterial = new CANNON.Material('default');
 const defaultContactMaterial = new CANNON.ContactMaterial(defaultMaterial, defaultMaterial, {
     friction: 0.1,
-    restitution: 0.9
+    restitution: 0.2
 });
 world.defaultContactMaterial = defaultContactMaterial;
 
@@ -59,7 +61,7 @@ const sphereGeometry = new THREE.SphereGeometry(1, 20, 20);
 const sphereMaterial = new THREE.MeshStandardMaterial({
     metalness: 0.3, 
     roughness: 0.4,
-    color: 0xff0000
+    color: 0xdd0000
 });
 
 const createSphere = (radius, position) => {
@@ -74,7 +76,7 @@ const createSphere = (radius, position) => {
     const shape = new CANNON.Sphere(radius);
     const body = new CANNON.Body({
         mass: 1,
-        position: new CANNON.Vec3(0, 3, 0),
+        position: new CANNON.Vec3(0, 1, 0),
         shape, 
         material: defaultMaterial
     });
@@ -99,13 +101,13 @@ floorGeometry.receiveShadow = true;
 scene.add(floorGeometry);
 
 //Light
-const ambientLight = new THREE.AmbientLight(0xffffff, 2.1);
+const ambientLight = new THREE.AmbientLight(0x4466ff, 2.1);
 scene.add(ambientLight);
 
-const dirLight = new THREE.DirectionalLight(0xffffff, 2.1);
-dirLight.position.set(5, 2, 5);
+const dirLight = new THREE.DirectionalLight(0xfb6989, 1.3);
+dirLight.position.set(0, 8, 15);
 dirLight.castShadow = true;
-dirLight.shadow.camera.far = 15;
+dirLight.shadow.camera.far = 35; //Længden af skyggen
 scene.add(dirLight);
 
 //Sizes
@@ -132,7 +134,7 @@ window.addEventListener('resize', () => {
 
 //Camera
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100);
-camera.position.set(0, 5, 0);
+camera.position.set(0, 3, 0);
 camera.rotation.x = -Math.PI * 0.5;
 scene.add(camera);
 
