@@ -6,7 +6,7 @@ import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {DRACOLoader} from 'three/addons/loaders/DRACOLoader.js';
 import GUI from 'lil-gui';
-//import model from './assets/models/sten2.glb';
+
 
 //Debug
 const gui = new GUI();
@@ -34,14 +34,12 @@ const canvas = document.querySelector('canvas.webgl');
 //Scene
 const scene = new THREE.Scene();
 
-
+//Def loader
 const dracoLoader = new DRACOLoader();
 dracoLoader.setDecoderPath( '/draco/');
 
 const loader = new GLTFLoader();
 loader.setDRACOLoader( dracoLoader );
-
-
 
 // Load a glTF resource
 loader.load(
@@ -50,6 +48,8 @@ loader.load(
 	// called when the resource is loaded
 	function ( gltf ) {
 
+        gltf.scene.scale.set(1, 1, 1);
+        gltf.scene.position.set(0, 1, 0);
 		scene.add( gltf.scene );
 
 		// gltf.animations; // Array<THREE.AnimationClip>
