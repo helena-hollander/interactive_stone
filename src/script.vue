@@ -3,8 +3,10 @@ import * as THREE from 'three';
 import CANNON from 'cannon';
 import { ref } from 'vue';
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js';
-import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader.js';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+// import {DRACOLoader} from 'three/examples/jsm/loaders/DRACOLoader.js';
 import GUI from 'lil-gui';
+import model from './assets/models/sten2.glb';
 
 //Debug
 const gui = new GUI();
@@ -32,6 +34,42 @@ const canvas = document.querySelector('canvas.webgl');
 //Scene
 const scene = new THREE.Scene();
 
+//Load model
+const loader = new GLTFLoader().setPath('./assets/models/');
+loader.load('sten2.glb', (gltf)=>{
+    scene.add(gltf.scene);
+    const mesh = gltf.scene;
+    mesh.scale.set(3, 3, 3);
+    mesh.position.set(0, 1, 0);
+    scene.add(mesh);
+});
+
+// const dracoLoader = new DRACOLoader();
+// dracoLoader.setDecoderPath('/draco/');
+
+// const gltfLoader = new GLTFLoader();
+// gltfLoader.setDRACOLoader(dracoLoader);
+
+// let mixer = null;
+
+// gltfLoader.load(
+//     ,
+//     (gltf) => {
+//      gltf.scene.scale.set(0.1, 0.1, 0.1);
+//      scene.add(gltf.scene);
+
+//      //Animations
+//         mixer = new THREE.AnimationMixer(gltf.scene);
+//         const action = mixer.clipAction(gltf.animations[0]);
+//         action.play();
+//     }, 
+//     undefined,
+//     (error) => {
+//         console.error(error);
+
+//     }
+// );
+
 //Physics world
 const world = new CANNON.World();
 world.broadphase = new CANNON.SAPBroadphase(world);
@@ -42,7 +80,7 @@ world.gravity.set(0, -9.82, 0);
 const defaultMaterial = new CANNON.Material('default');
 const defaultContactMaterial = new CANNON.ContactMaterial(defaultMaterial, defaultMaterial, {
     friction: 0.1,
-    restitution: 0.6
+    restitution: 0.9
 });
 world.defaultContactMaterial = defaultContactMaterial;
 
@@ -134,8 +172,8 @@ window.addEventListener('resize', () => {
 });
 
 //Camera
-const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100);
-camera.position.set(0, 3, 0);
+const camera = new THREE.PerspectiveCamera(25, sizes.width / sizes.height, 0.1, 100);
+camera.position.set(0, 10, 0);
 camera.rotation.x = -Math.PI * 0.5;
 scene.add(camera);
 
@@ -169,6 +207,11 @@ const tick = () => {
         objects.mesh.position.copy(objects.body.position);
         objects.mesh.quaternion.copy(objects.body.quaternion);
     }
+
+    //Model animation
+    // if(mixer){
+    //     mixer.update(deltaTime);
+    // }
 
     //Update controls
     controls.update();
