@@ -4,9 +4,9 @@ import CANNON from 'cannon';
 import { ref } from 'vue';
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
-// import {DRACOLoader} from 'three/examples/jsm/loaders/DRACOLoader.js';
+import {DRACOLoader} from 'three/addons/loaders/DRACOLoader.js';
 import GUI from 'lil-gui';
-import model from './assets/models/sten2.glb';
+//import model from './assets/models/sten2.glb';
 
 //Debug
 const gui = new GUI();
@@ -34,41 +34,47 @@ const canvas = document.querySelector('canvas.webgl');
 //Scene
 const scene = new THREE.Scene();
 
-//Load model
-const loader = new GLTFLoader().setPath('./assets/models/');
-loader.load('sten2.glb', (gltf)=>{
-    scene.add(gltf.scene);
-    const mesh = gltf.scene;
-    mesh.scale.set(3, 3, 3);
-    mesh.position.set(0, 1, 0);
-    scene.add(mesh);
-});
 
-// const dracoLoader = new DRACOLoader();
-// dracoLoader.setDecoderPath('/draco/');
+const dracoLoader = new DRACOLoader();
+dracoLoader.setDecoderPath( '/draco/');
 
-// const gltfLoader = new GLTFLoader();
-// gltfLoader.setDRACOLoader(dracoLoader);
+const loader = new GLTFLoader();
+loader.setDRACOLoader( dracoLoader );
 
-// let mixer = null;
 
-// gltfLoader.load(
-//     ,
-//     (gltf) => {
-//      gltf.scene.scale.set(0.1, 0.1, 0.1);
-//      scene.add(gltf.scene);
 
-//      //Animations
-//         mixer = new THREE.AnimationMixer(gltf.scene);
-//         const action = mixer.clipAction(gltf.animations[0]);
-//         action.play();
-//     }, 
-//     undefined,
-//     (error) => {
-//         console.error(error);
+// Load a glTF resource
+loader.load(
+	// resource URL
+	'/models/sten2.glb',
+	// called when the resource is loaded
+	function ( gltf ) {
 
-//     }
-// );
+		scene.add( gltf.scene );
+
+		// gltf.animations; // Array<THREE.AnimationClip>
+		// gltf.scene; // THREE.Group
+		// gltf.scenes; // Array<THREE.Group>
+		// gltf.cameras; // Array<THREE.Camera>
+		// gltf.asset; // Object
+
+	},
+	// called while loading is progressing
+	function ( xhr ) {
+
+		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+
+	},
+	// called when loading has errors
+	function ( error ) {
+
+		console.log( 'An error happened' );
+
+	}
+);
+
+
+
 
 //Physics world
 const world = new CANNON.World();
@@ -208,10 +214,6 @@ const tick = () => {
         objects.mesh.quaternion.copy(objects.body.quaternion);
     }
 
-    //Model animation
-    // if(mixer){
-    //     mixer.update(deltaTime);
-    // }
 
     //Update controls
     controls.update();
