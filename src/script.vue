@@ -44,11 +44,11 @@ loader.setDRACOLoader( dracoLoader );
 // Load a glTF resource
 loader.load(
 	// resource URL
-	'/models/sten2.glb',
+	'/models/sten_tex2.glb',
 	// called when the resource is loaded
 	function ( gltf ) {
 
-        gltf.scene.scale.set(1, 1, 1);
+        gltf.scene.scale.set(0.5, 0.5, 0.5);
         gltf.scene.position.set(0, 1, 0);
 		scene.add( gltf.scene );
 
