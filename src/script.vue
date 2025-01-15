@@ -1,6 +1,7 @@
 <script setup>
 import * as THREE from 'three';
-import CANNON from 'cannon';
+import * as CANNON from 'cannon-es';
+//import { CannonDebugRenderer } from 'cannon-es-debugger';
 import { ref } from 'vue';
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
@@ -23,9 +24,11 @@ debugObject.createSphere = () =>
     });
     
 }
-
 gui.add(debugObject, 'createSphere');
 
+
+//Load stone
+let stoneModel = null;
 
 //Sizes
 const sizes = {
@@ -42,6 +45,27 @@ const canvas = document.querySelector('canvas.webgl');
 //Scene
 const scene = new THREE.Scene();
 
+//Axes helper
+const axesHelper = new THREE.AxesHelper();
+scene.add(axesHelper);
+
+
+//Physics world
+const world = new CANNON.World();
+world.broadphase = new CANNON.SAPBroadphase(world);
+world.allowSleep = true;
+world.gravity.set(0, -9.82, 0); //Kan laves til en function, der tager højde for musens position
+
+//const cannonDebugRenderer = new THREE.CannonDebugRenderer( scene, world );
+
+//Physics deault material
+const defaultMaterial = new CANNON.Material('default');
+const defaultContactMaterial = new CANNON.ContactMaterial(defaultMaterial, defaultMaterial, {
+    friction: 0,
+    restitution: 0.3
+});
+world.defaultContactMaterial = defaultContactMaterial;
+
 //Def loader
 const dracoLoader = new DRACOLoader();
 dracoLoader.setDecoderPath( '/draco copy/');
@@ -50,21 +74,29 @@ const loader = new GLTFLoader();
 loader.setDRACOLoader( dracoLoader );
 
 // Load a glTF resource
+
+
 loader.load(
 	// resource URL
 	'/models/sten_tex2.glb',
 	// called when the resource is loaded
 	function ( gltf ) {
 
-        gltf.scene.scale.set(0.5, 0.5, 0.5);
-        gltf.scene.position.set(0, 1, 0);
-		//scene.add( gltf.scene );
+        stoneModel = gltf.scene;
+        console.log(stoneModel);
+        //createStone();
 
-		// gltf.animations; // Array<THREE.AnimationClip>
-		// gltf.scene; // THREE.Group
-		// gltf.scenes; // Array<THREE.Group>
-		// gltf.cameras; // Array<THREE.Camera>
-		// gltf.asset; // Object
+        stoneModel.traverse((child) => {
+            if (child.isMesh) {
+                child.material.roughness = 0.1; // Set the desired roughness value
+                child.material.metalness = 0.9; // Set the desired metalness value
+                child.material.color = new THREE.Color(0xff2222); // Set the desired color
+            }
+        });
+ 
+        // gltf.scene.scale.set(0.5, 0.9, 0.5);
+        // gltf.scene.position.set(0, 1, 0);
+		//scene.add( gltf.scene );
 
 	},
 	// called while loading is progressing
@@ -81,24 +113,54 @@ loader.load(
 	}
 );
 
-//Axes helper
-const axesHelper = new THREE.AxesHelper();
-scene.add(axesHelper);
+// const stoneGeometry = stoneModel;
+// const stoneMaterial = new THREE.MeshStandardMaterial({
+//     metalness: 2, 
+//     roughness: 0,
+//     color: 0xdd0000
+// });
+
+const objectsToUpdate = [];
+
+const createStone = (position, radius) => {
+    if(!stoneModel) return;
+    // Clone the stone model
+    const stone = stoneModel.clone();
+    
+    stone.scale.set(radius, radius, radius*1.2);
+    stone.position.copy(position);
+    scene.add(stone);
+
+    // Cannon.js body
+    const shape = new CANNON.Sphere(radius);
+    const body = new CANNON.Body({
+        mass: 1,
+        position: new CANNON.Vec3(position.x, position.y, position.z),
+        scale: new CANNON.Vec3(radius, radius, radius*1.5),
+        shape,
+        material: defaultMaterial
+    });
+    body.position.copy(position);
+    console.log(body.quaternion);
+    world.addBody(body);
+    objectsToUpdate.push({mesh:stone, body});
+};
 
 
-//Physics world
-const world = new CANNON.World();
-world.broadphase = new CANNON.SAPBroadphase(world);
-world.allowSleep = true;
-world.gravity.set(0, -9.82, 0); //Kan laves til en function, der tager højde for musens position
-
-//Physics deault material
-const defaultMaterial = new CANNON.Material('default');
-const defaultContactMaterial = new CANNON.ContactMaterial(defaultMaterial, defaultMaterial, {
-    friction: 0,
-    restitution: 0.3
+canvas.addEventListener('click', () => {
+    const position = new THREE.Vector3(
+        (Math.random() - 0.5) * 2,
+        Math.random() * 2,
+        (Math.random() - 0.5) * 2
+    );
+    const radius = Math.random() * 0.5 + 0.1;
+    createStone(position, radius);
+    console.log('click', stoneModel);
 });
-world.defaultContactMaterial = defaultContactMaterial;
+
+
+
+
 
 //Floor physics
 const floorShape = new CANNON.Plane();
@@ -129,7 +191,7 @@ createWall({x: 0, y: 0, z: sizes.height *0.01 *0.5}, Math.PI);
 createWall({x: 0, y: 0, z: -sizes.height *0.01 *0.5}, 0);
 
 
-const objectsToUpdate = [];
+
 
 //Create sphere (mesh and body)
 const sphereGeometry = new THREE.SphereGeometry(1, 20, 20);
@@ -152,7 +214,7 @@ const createSphere = (radius, position) => {
     const shape = new CANNON.Sphere(radius);
     const body = new CANNON.Body({
         mass: 1,
-        position: new CANNON.Vec3(0, 1, 0),
+        position: new CANNON.Vec3(0, 4, 0),
         shape, 
         material: defaultMaterial
     });
@@ -220,6 +282,8 @@ renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.setSize(sizes.width, sizes.height);
 
+
+
 //Animate
 const clock = new THREE.Clock();
 let oldElapsedTime = 0;
@@ -242,6 +306,8 @@ const tick = () => {
 
     //Update controls
     controls.update();
+
+    //cannonDebugRenderer.update(); 
 
     //Render
     renderer.render(scene, camera);
