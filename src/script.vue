@@ -8,6 +8,7 @@ import {DRACOLoader} from 'three/addons/loaders/DRACOLoader.js';
 import GUI from 'lil-gui';
 
 
+
 //Debug
 const gui = new GUI();
 const debugObject = {};
@@ -20,12 +21,19 @@ debugObject.createSphere = () =>
         z: (Math.random() - 0.5) * 3
         
     });
-
+    
 }
 
 gui.add(debugObject, 'createSphere');
 
 
+//Sizes
+const sizes = {
+    width: 1080/3, 
+    height: 2340/3,
+
+    //2340x1080
+}
 
 
 //Canvas
@@ -36,7 +44,7 @@ const scene = new THREE.Scene();
 
 //Def loader
 const dracoLoader = new DRACOLoader();
-dracoLoader.setDecoderPath( '/draco/');
+dracoLoader.setDecoderPath( '/draco copy/');
 
 const loader = new GLTFLoader();
 loader.setDRACOLoader( dracoLoader );
@@ -50,7 +58,7 @@ loader.load(
 
         gltf.scene.scale.set(0.5, 0.5, 0.5);
         gltf.scene.position.set(0, 1, 0);
-		scene.add( gltf.scene );
+		//scene.add( gltf.scene );
 
 		// gltf.animations; // Array<THREE.AnimationClip>
 		// gltf.scene; // THREE.Group
@@ -73,20 +81,22 @@ loader.load(
 	}
 );
 
-
+//Axes helper
+const axesHelper = new THREE.AxesHelper();
+scene.add(axesHelper);
 
 
 //Physics world
 const world = new CANNON.World();
 world.broadphase = new CANNON.SAPBroadphase(world);
 world.allowSleep = true;
-world.gravity.set(0, -9.82, 0);
+world.gravity.set(0, -9.82, 0); //Kan laves til en function, der tager højde for musens position
 
 //Physics deault material
 const defaultMaterial = new CANNON.Material('default');
 const defaultContactMaterial = new CANNON.ContactMaterial(defaultMaterial, defaultMaterial, {
-    friction: 0.1,
-    restitution: 0.9
+    friction: 0,
+    restitution: 0.3
 });
 world.defaultContactMaterial = defaultContactMaterial;
 
@@ -97,6 +107,27 @@ floorBody.mass = 0;
 floorBody.addShape(floorShape);
 floorBody.quaternion.setFromAxisAngle(new CANNON.Vec3(-1, 0, 0), Math.PI * 0.5);
 world.addBody(floorBody);
+
+
+// Walls physics
+const createWall = (position, rotation) => {
+    const wallShape = new CANNON.Plane();
+    const wallBody = new CANNON.Body({
+        mass: 0,
+        shape: wallShape,
+        material: defaultMaterial,
+        axesHelper: true
+    });
+    wallBody.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 1, 0), rotation); // Rotate the wall to be vertical
+    wallBody.position.copy(position);
+    world.addBody(wallBody);
+}
+
+createWall({x: sizes.width *0.01 *0.5, y: 0, z: 0}, - Math.PI * 0.5);
+createWall({x: -sizes.width *0.01 *0.5, y: 0, z: 0}, Math.PI * 0.5);
+createWall({x: 0, y: 0, z: sizes.height *0.01 *0.5}, Math.PI);
+createWall({x: 0, y: 0, z: -sizes.height *0.01 *0.5}, 0);
+
 
 const objectsToUpdate = [];
 
@@ -134,7 +165,7 @@ const createSphere = (radius, position) => {
 
 //Floor mesh
 const floorGeometry = new THREE.Mesh(
-    new THREE.PlaneGeometry(10, 20),
+    new THREE.PlaneGeometry(sizes.width * 0.01, sizes.height * 0.01),
     new THREE.MeshStandardMaterial({
         color: 0xffffff,
         metalness: 0.3,
@@ -155,13 +186,7 @@ dirLight.castShadow = true;
 dirLight.shadow.camera.far = 35; //Længden af skyggen
 scene.add(dirLight);
 
-//Sizes
-const sizes = {
-    width: 1080/3, 
-    height: 2340/3
 
-    //2340x1080
-}
 window.addEventListener('resize', () => {
     //Update sizes
     // sizes.width = 600;
@@ -179,7 +204,7 @@ window.addEventListener('resize', () => {
 
 //Camera
 const camera = new THREE.PerspectiveCamera(25, sizes.width / sizes.height, 0.1, 100);
-camera.position.set(0, 10, 0);
+camera.position.set(0, 17.5, 0);
 camera.rotation.x = -Math.PI * 0.5;
 scene.add(camera);
 
