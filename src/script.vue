@@ -10,6 +10,19 @@ import GUI from 'lil-gui';
 
 
 
+//Mouse move
+let mousePosition = { x: 0, y: 0 };
+
+// Function to get mouse position
+const getMousePosition = (event) => {
+    mousePosition.x = event.clientX;
+    mousePosition.y = event.clientY;
+    console.log(`Mouse position: X=${mousePosition.x}, Y=${mousePosition.y}`);
+};
+
+// Add event listener for mousemove
+window.addEventListener('mousemove', getMousePosition);
+
 //Debug
 const gui = new GUI();
 const debugObject = {};
@@ -41,6 +54,7 @@ const sizes = {
 
 //Canvas
 const canvas = document.querySelector('canvas.webgl');
+
 
 //Scene
 const scene = new THREE.Scene();
@@ -293,6 +307,13 @@ const tick = () => {
     const elapsedTime = clock.getElapsedTime();
     const deltaTime = elapsedTime - oldElapsedTime;
     oldElapsedTime = elapsedTime;
+
+      // Map mouse position to gravity values
+      const gravityX = (mousePosition.x / window.innerWidth - 0.5) * 20; // Adjust the multiplier as needed
+    const gravityZ = (mousePosition.y / window.innerHeight - 0.5) * 20; // Adjust the multiplier as needed
+
+    // Update the physics world gravity
+    world.gravity.set(gravityX, -9.82, gravityZ);
 
     //Update physics world
     world.step(1 / 60, deltaTime, 3);
