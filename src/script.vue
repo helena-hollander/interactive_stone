@@ -79,8 +79,8 @@ world.gravity.set(0, -9.82, 0); //Gravity
 //Physics deault material
 const defaultMaterial = new CANNON.Material('default');
 const defaultContactMaterial = new CANNON.ContactMaterial(defaultMaterial, defaultMaterial, {
-    friction: 0,
-    restitution: 0.3
+    friction: 0.7,
+    restitution: 0
 });
 world.defaultContactMaterial = defaultContactMaterial;
 
@@ -145,7 +145,7 @@ const createStone = (position, radius) => {
     // Clone the stone model
     const stone = stoneModel.clone();
     
-    stone.scale.set(radius, radius, radius*1.2);
+    stone.scale.set(radius, radius, radius*0.8);
     stone.position.copy(position);
     scene.add(stone);
 
@@ -154,12 +154,12 @@ const createStone = (position, radius) => {
     const body = new CANNON.Body({
         mass: 1,
         position: new CANNON.Vec3(position.x, position.y, position.z),
-        scale: new CANNON.Vec3(radius, radius, radius*1.5),
+        scale: new CANNON.Vec3(radius, radius, radius*0.4),
         shape,
         material: defaultMaterial
     });
     body.position.copy(position);
-    console.log(body.quaternion);
+    console.log(body);
     world.addBody(body);
     objectsToUpdate.push({mesh:stone, body});
 };
@@ -171,7 +171,7 @@ canvas.addEventListener('click', () => {
         Math.random() * 2,
         (Math.random() - 0.5) * 2
     );
-    const radius = Math.random() * 0.5 + 0.1;
+    const radius = Math.random() * 0.3 + 0.04; //Størrelse på sten - * styrrer de helt store, + styrrer at de ikke bliver alt for små
     createStone(position, radius);
     console.log('click', stoneModel);
 });
