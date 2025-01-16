@@ -1,7 +1,6 @@
 <script setup>
 import * as THREE from 'three';
 import * as CANNON from 'cannon-es';
-//import { CannonDebugRenderer } from 'cannon-es-debugger';
 import { ref } from 'vue';
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
@@ -17,7 +16,12 @@ let mousePosition = { x: 0, y: 0 };
 const getMousePosition = (event) => {
     mousePosition.x = event.clientX;
     mousePosition.y = event.clientY;
-    console.log(`Mouse position: X=${mousePosition.x}, Y=${mousePosition.y}`);
+    //console.log(`Mouse position: X=${mousePosition.x}, Y=${mousePosition.y}`);
+
+    // Wake up all bodies in the physics world
+    world.bodies.forEach((body) => {
+        body.wakeUp();
+    });
 };
 
 // Add event listener for mousemove
@@ -68,9 +72,9 @@ scene.add(axesHelper);
 const world = new CANNON.World();
 world.broadphase = new CANNON.SAPBroadphase(world);
 world.allowSleep = true;
-world.gravity.set(0, -9.82, 0); //Kan laves til en function, der tager højde for musens position
+world.gravity.set(0, -9.82, 0); //Gravity
 
-//const cannonDebugRenderer = new THREE.CannonDebugRenderer( scene, world );
+
 
 //Physics deault material
 const defaultMaterial = new CANNON.Material('default');
