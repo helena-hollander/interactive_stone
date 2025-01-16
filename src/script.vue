@@ -84,6 +84,17 @@ const defaultContactMaterial = new CANNON.ContactMaterial(defaultMaterial, defau
 });
 world.defaultContactMaterial = defaultContactMaterial;
 
+const colors = [
+    0xff2222, // Red
+    0x22ff22, // Green
+    0x2222ff, // Blue
+    0xffff22, // Yellow
+    0xff22ff  // Magenta
+];
+
+  // Randomly select a color from the array
+  const color = colors[Math.floor(Math.random() * colors.length)];
+
 //Def loader
 const dracoLoader = new DRACOLoader();
 dracoLoader.setDecoderPath( '/draco copy/');
@@ -104,11 +115,16 @@ loader.load(
         console.log(stoneModel);
         //createStone();
 
+        
         stoneModel.traverse((child) => {
             if (child.isMesh) {
-                child.material.roughness = 0.1; // Set the desired roughness value
-                child.material.metalness = 0.9; // Set the desired metalness value
-                child.material.color = new THREE.Color(0xff2222); // Set the desired color
+                child.material = new THREE.MeshStandardMaterial({
+                roughness: 0.2,
+                metalness: 0.4,
+               
+                castShadow: true,
+                receiveShadow: true
+            });
             }
         });
  
@@ -140,13 +156,18 @@ loader.load(
 
 const objectsToUpdate = [];
 
+
+
 const createStone = (position, radius) => {
     if(!stoneModel) return;
     // Clone the stone model
     const stone = stoneModel.clone();
-    
     stone.scale.set(radius, radius, radius*0.8);
     stone.position.copy(position);
+    stone.color = new THREE.Color(color);
+   
+
+
     scene.add(stone);
 
     // Cannon.js body
@@ -257,14 +278,15 @@ floorGeometry.receiveShadow = true;
 scene.add(floorGeometry);
 
 //Light
-const ambientLight = new THREE.AmbientLight(0x4466ff, 2.1);
+const ambientLight = new THREE.AmbientLight(0xbcced1, 6.1);
 scene.add(ambientLight);
 
-const dirLight = new THREE.DirectionalLight(0xfb6989, 1.7);
-dirLight.position.set(0, 8, 15);
+const dirLight = new THREE.DirectionalLight(0xffffff, 0.7);
+dirLight.position.set(0, 18, 5);
 dirLight.castShadow = true;
 dirLight.shadow.camera.far = 35; //Længden af skyggen
 scene.add(dirLight);
+
 
 
 window.addEventListener('resize', () => {
