@@ -92,9 +92,6 @@ const colors = [
     0xff22ff  // Magenta
 ];
 
-  // Randomly select a color from the array
-  const color = colors[Math.floor(Math.random() * colors.length)];
-
 //Def loader
 const dracoLoader = new DRACOLoader();
 dracoLoader.setDecoderPath( '/draco copy/');
@@ -115,16 +112,13 @@ loader.load(
         console.log(stoneModel);
         //createStone();
 
-        
         stoneModel.traverse((child) => {
             if (child.isMesh) {
-                child.material = new THREE.MeshStandardMaterial({
-                roughness: 0.2,
-                metalness: 0.4,
-               
-                castShadow: true,
-                receiveShadow: true
-            });
+                child.material.roughness = 0.2; // Set the desired roughness value
+                child.material.metalness = 0.4; // Set the desired metalness value
+                child.material.color = new THREE.Color(0xff2222); // Set the desired color
+                child.castShadow = true;
+                child.receiveShadow = true;
             }
         });
  
@@ -164,10 +158,6 @@ const createStone = (position, radius) => {
     const stone = stoneModel.clone();
     stone.scale.set(radius, radius, radius*0.8);
     stone.position.copy(position);
-    stone.color = new THREE.Color(color);
-   
-
-
     scene.add(stone);
 
     // Cannon.js body
@@ -278,7 +268,7 @@ floorGeometry.receiveShadow = true;
 scene.add(floorGeometry);
 
 //Light
-const ambientLight = new THREE.AmbientLight(0xbcced1, 6.1);
+const ambientLight = new THREE.AmbientLight(0x66aaff, 6.1);
 scene.add(ambientLight);
 
 const dirLight = new THREE.DirectionalLight(0xffffff, 0.7);
