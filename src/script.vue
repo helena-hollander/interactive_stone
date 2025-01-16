@@ -63,6 +63,22 @@ const canvas = document.querySelector('canvas.webgl');
 //Scene
 const scene = new THREE.Scene();
 
+//Sound
+const hitSound = new Audio('/sounds/tinystone.mp3');
+const playHitSound = (collision) => {
+
+    const impactStrength = collision.contact.getImpactVelocityAlongNormal();
+    //console.log(impactStrength);
+
+    if(impactStrength > 3)
+    {
+        hitSound.volume = Math.random();
+        hitSound.currentTime = 0;
+        hitSound.play();
+    }
+   
+}
+
 //Axes helper
 const axesHelper = new THREE.AxesHelper();
 scene.add(axesHelper);
@@ -114,9 +130,9 @@ loader.load(
 
         stoneModel.traverse((child) => {
             if (child.isMesh) {
-                child.material.roughness = 0.2; // Set the desired roughness value
-                child.material.metalness = 0.4; // Set the desired metalness value
-                child.material.color = new THREE.Color(0xff2222); // Set the desired color
+                child.material.roughness = 0.02; // Set the desired roughness value
+                child.material.metalness = 0.1; // Set the desired metalness value
+                child.material.color = new THREE.Color(0x9fcbe0); // Set the desired color
                 child.castShadow = true;
                 child.receiveShadow = true;
             }
@@ -170,6 +186,7 @@ const createStone = (position, radius) => {
         material: defaultMaterial
     });
     body.position.copy(position);
+    body.addEventListener('collide', playHitSound);
     console.log(body);
     world.addBody(body);
     objectsToUpdate.push({mesh:stone, body});
@@ -268,14 +285,19 @@ floorGeometry.receiveShadow = true;
 scene.add(floorGeometry);
 
 //Light
-const ambientLight = new THREE.AmbientLight(0x66aaff, 6.1);
+const ambientLight = new THREE.AmbientLight(0x66aaff, 5.1);
 scene.add(ambientLight);
 
 const dirLight = new THREE.DirectionalLight(0xffffff, 0.7);
-dirLight.position.set(0, 18, 5);
+dirLight.position.set(2, 8, 4);
 dirLight.castShadow = true;
 dirLight.shadow.camera.far = 35; //Længden af skyggen
 scene.add(dirLight);
+const dirLight2 = new THREE.DirectionalLight(0xffffff, 0.7);
+dirLight2.position.set(-2, 8, -4);
+dirLight2.castShadow = true;
+dirLight2.shadow.camera.far = 35; //Længden af skyggen
+scene.add(dirLight2);
 
 
 
