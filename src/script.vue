@@ -7,6 +7,41 @@ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {DRACOLoader} from 'three/addons/loaders/DRACOLoader.js';
 import GUI from 'lil-gui';
 
+let rotation;
+
+//Gyro motion
+document.addEventListener('click', (event) => {
+  if (typeof DeviceMotionEvent.requestPermission === 'function') {
+    DeviceMotionEvent.requestPermission()
+      .then(response => {
+        if (response === 'granted') {
+          console.log('Motion permission granted on parent page');
+         
+        } else {
+          
+          console.error('Motion permission denied on parent page');
+        }
+      })
+      .catch(console.error);
+  } else {
+    console.log('DeviceMotionEvent.requestPermission is not available on this browser');
+  }
+}, { once: true }); // Run this only once after the first touch
+
+
+
+addEventListener("deviceorientation", (event) => {
+
+if(event){
+
+rotation = event;
+
+console.log(rotation);
+
+}
+
+});
+
 
 
 //Mouse move
