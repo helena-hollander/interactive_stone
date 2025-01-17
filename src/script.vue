@@ -382,8 +382,10 @@ const tick = () => {
     oldElapsedTime = elapsedTime;
 
       // Map mouse position to gravity values
-      const gravityX = (mousePosition.x / window.innerWidth - 0.5) * 20; // Adjust the multiplier as needed
-    const gravityZ = (mousePosition.y / window.innerHeight - 0.5) * 20; // Adjust the multiplier as needed
+      const gravityX = (mousePosition.x / window.innerWidth - 0.5) * 20 * rotation.alpha; // Adjust the multiplier as needed
+    const gravityZ = (mousePosition.y / window.innerHeight - 0.5) * 20 * rotation.beta; // Adjust the multiplier as needed
+
+
 
     // Update the physics world gravity
     world.gravity.set(gravityX, -9.82, gravityZ);
