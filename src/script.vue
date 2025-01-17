@@ -9,24 +9,24 @@ import GUI from 'lil-gui';
 
 let rotation;
 
-//Gyro motion
-document.addEventListener('click', (event) => {
-  if (typeof DeviceMotionEvent.requestPermission === 'function') {
-    DeviceMotionEvent.requestPermission()
-      .then(response => {
-        if (response === 'granted') {
-          console.log('Motion permission granted on parent page');
+//Gyro motion - spørg Karl
+// document.addEventListener('click', (event) => {
+//   if (typeof DeviceMotionEvent.requestPermission === 'function') {
+//     DeviceMotionEvent.requestPermission()
+//       .then(response => {
+//         if (response === 'granted') {
+//           console.log('Motion permission granted on parent page');
          
-        } else {
+//         } else {
           
-          console.error('Motion permission denied on parent page');
-        }
-      })
-      .catch(console.error);
-  } else {
-    console.log('DeviceMotionEvent.requestPermission is not available on this browser');
-  }
-}, { once: true }); // Run this only once after the first touch
+//           console.error('Motion permission denied on parent page');
+//         }
+//       })
+//       .catch(console.error);
+//   } else {
+//     console.log('DeviceMotionEvent.requestPermission is not available on this browser');
+//   }
+// }, { once: true }); // Run this only once after the first touch
 
 
 
@@ -382,8 +382,8 @@ const tick = () => {
     oldElapsedTime = elapsedTime;
 
       // Map mouse position to gravity values
-      const gravityX = (mousePosition.x / window.innerWidth - 0.5) * 20 * rotation.alpha; // Adjust the multiplier as needed
-    const gravityZ = (mousePosition.y / window.innerHeight - 0.5) * 20 * rotation.beta; // Adjust the multiplier as needed
+      const gravityX = (mousePosition.x / window.innerWidth - 0.5) * 20; // Adjust the multiplier as needed
+    const gravityZ = (mousePosition.y / window.innerHeight - 0.5) * 20; // Adjust the multiplier as needed
 
 
 
