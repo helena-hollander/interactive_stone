@@ -2,7 +2,7 @@
 import * as THREE from 'three';
 import * as CANNON from 'cannon-es';
 import { ref } from 'vue';
-import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js';
+// import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {DRACOLoader} from 'three/addons/loaders/DRACOLoader.js';
 import GUI from 'lil-gui';
@@ -167,7 +167,7 @@ loader.load(
             if (child.isMesh) {
                 child.material.roughness = 0.02; // Set the desired roughness value
                 child.material.metalness = 0.1; // Set the desired metalness value
-                child.material.color = new THREE.Color(0x9fcbe0); // Set the desired color
+                child.material.color = new THREE.Color(0x0E6897); // Set the desired color
                 child.castShadow = true;
                 child.receiveShadow = true;
             }
@@ -310,7 +310,7 @@ const createSphere = (radius, position) => {
 const floorGeometry = new THREE.Mesh(
     new THREE.PlaneGeometry(sizes.width * 0.01, sizes.height * 0.01),
     new THREE.MeshStandardMaterial({
-        color: 0xffffff,
+        color: 0xB6D7E8,
         metalness: 0.3,
         roughness: 0.4
     })
@@ -320,19 +320,24 @@ floorGeometry.receiveShadow = true;
 scene.add(floorGeometry);
 
 //Light
-const ambientLight = new THREE.AmbientLight(0x66aaff, 5.1);
+const ambientLight = new THREE.AmbientLight(0xF4F3EF, 2.1);
 scene.add(ambientLight);
 
-const dirLight = new THREE.DirectionalLight(0xffffff, 0.7);
+const dirLight = new THREE.DirectionalLight(0xE8D7FF, 0.5);
 dirLight.position.set(2, 8, 4);
 dirLight.castShadow = true;
 dirLight.shadow.camera.far = 35; //Længden af skyggen
 scene.add(dirLight);
-const dirLight2 = new THREE.DirectionalLight(0xffffff, 0.7);
+const dirLight2 = new THREE.DirectionalLight(0xE8D7FF, 1.7);
 dirLight2.position.set(-2, 8, -4);
 dirLight2.castShadow = true;
 dirLight2.shadow.camera.far = 35; //Længden af skyggen
 scene.add(dirLight2);
+const dirLight3 = new THREE.DirectionalLight(0x66B2DF, 0.9);
+dirLight3.position.set(-2, 4, 2);
+dirLight3.castShadow = true;
+dirLight3.shadow.camera.far = 35; //Længden af skyggen
+scene.add(dirLight3);
 
 
 
@@ -358,8 +363,8 @@ camera.rotation.x = -Math.PI * 0.5;
 scene.add(camera);
 
 //Controls
-const controls = new OrbitControls(camera, canvas);
-controls.enableDamping = true;
+// const controls = new OrbitControls(camera, canvas);
+// controls.enableDamping = true;
 
 //Renderer
 const renderer = new THREE.WebGLRenderer({
@@ -401,7 +406,7 @@ const tick = () => {
 
 
     //Update controls
-    controls.update();
+    // controls.update();
 
     //cannonDebugRenderer.update(); 
 
