@@ -1,3 +1,12 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@font-face {
+    font-family: 'Klavika';
+    src: url('/Fonts/klavika-medium.otf') format('truetype');
+}
+@font-face {
+    font-family: 'Klavika_Light';
+    src: url('/Fonts/klavika-light.otf') format('truetype');
+}

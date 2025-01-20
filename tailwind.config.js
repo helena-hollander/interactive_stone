@@ -5,7 +5,16 @@ export default {
     "./src/**/*.{vue,js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        display: ["Klavika", "sans-serif"], light: ["Klavika-Light", "sans-serif"], 
+      },
+    
+   },
+   colors:{
+    'primary-dark': '#34383E',
+   },
+
   },
   plugins: [],
 }
