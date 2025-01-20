@@ -63,20 +63,20 @@ const getMousePosition = (event) => {
 window.addEventListener('mousemove', getMousePosition);
 
 //Debug
-const gui = new GUI();
-const debugObject = {};
+// const gui = new GUI();
+// const debugObject = {};
 
-debugObject.createSphere = () =>
-{
-    createSphere(Math.random() * 0.2, { //Her styres størrelsen på kuglen
-        x: (Math.random() - 0.5) * 3, //Placeringen af kuglen
-        y: 0.5, //Falder fra denne højde
-        z: (Math.random() - 0.5) * 3
+// debugObject.createSphere = () =>
+// {
+//     createSphere(Math.random() * 0.2, { //Her styres størrelsen på kuglen
+//         x: (Math.random() - 0.5) * 3, //Placeringen af kuglen
+//         y: 0.5, //Falder fra denne højde
+//         z: (Math.random() - 0.5) * 3
         
-    });
+//     });
     
-}
-gui.add(debugObject, 'createSphere');
+// }
+//gui.add(debugObject, 'createSphere');
 
 
 //Load stone
